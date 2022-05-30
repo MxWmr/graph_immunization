@@ -2,20 +2,20 @@ import retworkx as rx
 import networkx as nx
 import numpy as np
 from tqdm import tqdm
-
+from vulnerability_meas import max_ev
 
 
 def netshield(G,M):
 
-    G2 = rx.networkx_converter(G)
+    #G2 = rx.networkx_converter(G)
     vaccinated=[]
-    A = rx.adjacency_matrix(G2)
+    A = rx.adjacency_matrix(G)
 
-
-    w,vect = np.linalg.eig(A)
-    idfeig = np.argmax(np.absolute(w))
-    feig = w[idfeig]
-    u = vect[idfeig]
+    #w,vect = np.linalg.eig(A)
+    #idfeig = np.argmax(np.absolute(w))
+    #feig = w[idfeig]
+    #u = vect[idfeig]
+    feig,u=max_ev(A=A,vector=True)
 
     v=np.zeros([len(u)])
     score=np.zeros([len(u)])
@@ -46,14 +46,14 @@ def netshield_plus(G,M,b):
     t=int(np.floor(M/b))
 
     for j in tqdm(range(t)):
-        vacc_p = netshield(G,M)
+        vacc_p = netshield(G2,M)
         vaccinated = list( set(vaccinated).union(vacc_p))
 
         G2.remove_nodes_from(vacc_p)
         A = rx.adjacency_matrix(G2)
     
     if M > t*b :
-        vacc_p = netshield(A,M-t*b)
+        vacc_p = netshield(G2,M-t*b)
         vaccinated = list( set(vaccinated).union(vacc_p))
     
     return vaccinated

@@ -60,7 +60,7 @@ for M in tqdm(M_list):
 
  
 
-np.save('saved_lists/'+'eff_'+'configmodel_'+'GA2_'+'10inf'+'.npy',eff)
+np.save('saved_lists/'+'eff_'+'configmodel_'+'netshield_'+'10inf'+'.npy',eff)
 
 plt.figure(1)
 plt.plot(cost,eff)
@@ -68,7 +68,7 @@ plt.grid()
 plt.title('Genetic optimization for a small world graph')
 plt.xlabel('Proportion of nodes vaccinated')
 plt.ylabel('Proportion of nodes infected ')
-plt.savefig('saved_benchmarks/'+'benchmark_'+'configmodel_'+'GA2_'+'10inf'+'.png')
+plt.savefig('saved_benchmarks/'+'benchmark_'+'configmodel_'+'netshield_'+'10inf'+'.png')
 plt.show()
 
 
