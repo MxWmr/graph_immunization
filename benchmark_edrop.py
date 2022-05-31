@@ -72,7 +72,7 @@ for M in tqdm(M_list):
 
         ## Degree
 
-        vaccinated = deg_max(G,M)
+        """vaccinated = deg_max(G,M)
 
         G_i=G.copy()
         G_i.remove_nodes_from(vaccinated)
@@ -110,20 +110,20 @@ for M in tqdm(M_list):
         for i in range(num_calc):
             r+= max_ev(G_i)
 
-        rne+=r/num_calc
+        rne+=r/num_calc"""
 
-    #ed_ga.append(l_rs[i_g]-rga/n_graph)
-    ed_deg.append(l_rs[i_g]-rde/n_graph)
-    ed_cent.append(l_rs[i_g]-rce/n_graph)
-    ed_netsh.append(l_rs[i_g]-rne/n_graph)
-
-
+    ed_ga.append(l_rs[i_g]-rga/n_graph)
+    #ed_deg.append(l_rs[i_g]-rde/n_graph)
+    #ed_cent.append(l_rs[i_g]-rce/n_graph)
+    #ed_netsh.append(l_rs[i_g]-rne/n_graph)
 
 
 
-mat = np.array([ed_deg,ed_cent,ed_netsh,ed_ga])
 
-np.save('saved_lists/'+'eff_'+'configmodel_'+'all_'+'.npy',mat)
+
+mat = np.array([ed_ga])
+
+np.save('saved_lists/'+'eff_'+'configmodel_'+'all2_'+'.npy',mat)
 
 plt.figure(1)
 plt.plot(cost,ed_ga,label='genetic algorithm')

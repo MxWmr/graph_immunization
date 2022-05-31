@@ -216,16 +216,16 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
         ax = fig.add_subplot(111)
        
         # create a variable for the line so we can later update it
-        line1, = ax.plot([],[],'r-o',alpha=0.8,label='vuln')  
+        
 
         if verbose>1:
             ax2 = ax.twinx() 
-            line2, = ax2.plot([],[],'b-*',alpha=0.8,label='simu')        
+            line2, = ax2.plot([],[],'b-*',alpha=0.8)        
             ax2.set_ylabel('proportion of infected')
-            ax2.legend()
-
+            
+        line1, = ax.plot([],[],'r-o',alpha=0.8)  
         plt.xlabel('generation')
-        ax.legend()
+        plt.legend((line1,line2),('vuln','simu'))
         ax.set_ylabel('vulnerability')
         plt.show()
 
@@ -340,5 +340,6 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
 #M = int(N*psi)   #Number of vaccinated node
 
 
-#vaccinated,l_n,l_vuln =GA(G,M,N, verbose=3, c=2000, mut_r=2, n_gene=2000 )
+#vaccinated,l_n,l_vuln =GA(G,M,N, verbose=3, c=10000, mut_r=2, n_gene=10000 )
 
+ 
