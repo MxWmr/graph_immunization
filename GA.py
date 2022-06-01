@@ -256,8 +256,11 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
         offsprings = crossover(parents, L, n_select,M)
         
 
+        ## Adaptative mutation rate
+        mut_r_adapt = mut_r + mut_r*n/1000
+
         ## Adding mutations
-        offsprings = mutation(offsprings, mut_r,M,N)
+        offsprings = mutation(offsprings, mut_r_adapt,M,N)
 
         
         ## Creating the new generation: elite and offspring
@@ -321,7 +324,7 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
 
     print(new_vuln)
     if verbose == 3:
-        plt.savefig('ga_evolution.png')
+        plt.savefig('ga_evolution3.png')
 
     return popu[0,:],l_n,l_vuln
 
@@ -340,6 +343,5 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
 #M = int(N*psi)   #Number of vaccinated node
 
 
-#vaccinated,l_n,l_vuln =GA(G,M,N, verbose=3, c=10000, mut_r=2, n_gene=10000 )
-
+#vaccinated,l_n,l_vuln =GA(G,M,N, verbose=3, c=10000, mut_r=1.5, n_gene=10000)
  

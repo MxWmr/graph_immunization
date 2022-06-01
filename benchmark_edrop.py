@@ -121,7 +121,7 @@ for M in tqdm(M_list):
 
 
 
-mat = np.array([ed_ga])
+mat = np.array([ed_deg,ed_cent,ed_netsh,ed_ga])
 
 np.save('saved_lists/'+'eff_'+'configmodel_'+'all2_'+'.npy',mat)
 
