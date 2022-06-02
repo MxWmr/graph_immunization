@@ -21,7 +21,3 @@ def scale_free(N):
 def small_world(N):
     G=nx.newman_watts_strogatz_graph(N,10,0.4)
     return G
-
-
-
-

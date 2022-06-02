@@ -1,14 +1,15 @@
+
+include("NetworksUtils.jl")
+
+using .NetworksUtils
 using LightGraphs
 
+N = 50
 
-G = LightGraphs.SimpleGraphs.watts_strogatz(1000,6,0.8);
+G = small_world(N);
 
-b = betweenness_centrality(G);
-
-
-
+eig = max_ev(G)
 
 
-
-
+print(eig)
 
