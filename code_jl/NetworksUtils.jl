@@ -77,8 +77,8 @@ end
 export max_ev
 
 function max_ev(G,vector=false)
-    A = adjacency_matrix(G)
-    val,vect = Arpack.eigs(A,nev=1)
+    A = adjacency_matrix(G);
+    val,vect = Arpack.eigs(A,nev=1);
     if vector
         return val,vect
     else

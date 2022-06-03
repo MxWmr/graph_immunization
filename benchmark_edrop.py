@@ -20,9 +20,9 @@ N = 1000    # number of nodes
 n_graph = 3
 l_G = []
 for i in range(n_graph):
-    #G = small_world(N)
+    G = small_world(N)
     #G = scale_free(N)
-    G = config_model(N)
+    #G = config_model(N)
     l_G.append(G)
 
 ## Spectral radius
@@ -72,7 +72,7 @@ for M in tqdm(M_list):
 
         ## Degree
 
-        """vaccinated = deg_max(G,M)
+        vaccinated = deg_max(G,M)
 
         G_i=G.copy()
         G_i.remove_nodes_from(vaccinated)
@@ -110,12 +110,12 @@ for M in tqdm(M_list):
         for i in range(num_calc):
             r+= max_ev(G_i)
 
-        rne+=r/num_calc"""
+        rne+=r/num_calc
 
     ed_ga.append(l_rs[i_g]-rga/n_graph)
-    #ed_deg.append(l_rs[i_g]-rde/n_graph)
-    #ed_cent.append(l_rs[i_g]-rce/n_graph)
-    #ed_netsh.append(l_rs[i_g]-rne/n_graph)
+    ed_deg.append(l_rs[i_g]-rde/n_graph)
+    ed_cent.append(l_rs[i_g]-rce/n_graph)
+    ed_netsh.append(l_rs[i_g]-rne/n_graph)
 
 
 
@@ -123,7 +123,7 @@ for M in tqdm(M_list):
 
 mat = np.array([ed_deg,ed_cent,ed_netsh,ed_ga])
 
-np.save('saved_lists/'+'eff_'+'configmodel_'+'all2_'+'.npy',mat)
+np.save('saved_lists/'+'eff_'+'configmodel_'+'all3_'+'.npy',mat)
 
 plt.figure(1)
 plt.plot(cost,ed_ga,label='genetic algorithm')
@@ -134,7 +134,7 @@ plt.grid()
 plt.legend()
 plt.xlabel('Proportion of nodes vaccinated')
 plt.ylabel('eigendrop')
-plt.savefig('saved_benchmarks/'+'fullbenchmark_'+'configmodel_'+'eigendrop2'+'.png')
+plt.savefig('saved_benchmarks/'+'fullbenchmark_'+'configmodel_'+'eigendrop3'+'.png')
 plt.show()
 
 
