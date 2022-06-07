@@ -48,9 +48,9 @@ def calc_vuln(G,popu, measure, vuln_elite):
     vulnerability = np.zeros([len(popu)])
     start = 0
     if vuln_elite is not None:
-        for j in range(len(vuln_elite)):
-            vulnerability[j] = vuln_elite[j]
         start = len(vuln_elite)
+        vulnerability[:start] = vuln_elite
+        
 
     if measure == 'max_ev':
 
@@ -136,7 +136,7 @@ def crossover(parents, L, n_select ,M):
     
     # append parents if it's necessary
     if n_select < L/2:
-        buffer_par.extend(buffer_par[0:L/2-n_select])
+        buffer_par.extend(buffer_par[0:int(L/2-n_select)])
     
     # randomize the crossover
     #rd.shuffle(buffer_par)
@@ -145,8 +145,8 @@ def crossover(parents, L, n_select ,M):
 
         # choose randomly the point of crossover
         cross_point = rd.randint(1,M)
-
         cross1 = rd.sample(list(parents[buffer_par[2*i],:]),cross_point)
+
         offsprings[2*i,0:cross_point] = cross1
 
 
@@ -324,24 +324,24 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
 
     print(new_vuln)
     if verbose == 3:
-        plt.savefig('ga_evolution3.png')
+        plt.savefig('ga_evolution4.png')
 
     return popu[0,:],l_n,l_vuln
 
 
 
 
-#from network_generation import *
+from network_generation import *
 
-#N = 1000    # number of nodes#
+N = 1000    # number of nodes#
 
-#G = small_world(N)
+G = small_world(N)
 #G = scale_free(N)
 #G = config_model(N)
 
-#psi = 0.3   #proportion of node vaccinated
-#M = int(N*psi)   #Number of vaccinated node
+psi = 0.3   #proportion of node vaccinated
+M = int(N*psi)   #Number of vaccinated node
 
 
-#vaccinated,l_n,l_vuln =GA(G,M,N, verbose=3, c=10000, mut_r=1.5, n_gene=10000)
+vaccinated,l_n,l_vuln =GA(G,M,N, verbose=2,  mut_r=1.5, n_select=10)
  
