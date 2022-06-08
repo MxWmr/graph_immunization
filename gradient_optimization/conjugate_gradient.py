@@ -1,27 +1,49 @@
 import numpy as np
 import retworkx as rx 
+from tqdm import tqdm
 
 
-def power_iteration(A,eta):
+def power_iteration(B,eps =0.01, itemax =1000):
+    
 
-    return psi,phi
+    b_k = np.random.rand(B.shape[0])
+
+    b_k1_norm = np.linalg.norm(b_k)
+    v=0
+    ite=0
+    while abs(v-b_k1_norm)>eps and ite<itemax:
+        v = b_k1_norm
+
+        # calculate the matrix-by-vector product Ab
+        b_k1 = B.dot(b_k)
+
+
+        # calculate the norm
+        b_k1_norm = np.linalg.norm(b_k1,ord=2)
+
+        # re normalize the vector
+
+        b_k = 1/(b_k1_norm+0.001)*b_k1
+
+        ite+=1
+
+    return b_k,np.reciprocal(b_k)/1000
 
 
 def grad_comput(A,eta):
-    psi,phi = power_iteration(A,eta)
+    B = np.dot(A,np.diag(eta))
+    psi,phi = power_iteration(B)
     return np.dot(np.diag(phi),np.dot(A.T,psi))
-
-
-
-
 
 
 
 def conjugate_gradient_opt(G,N):
     """
+    in:
     G: graph to immunize
+    N: number of nodes
 
-    Return:
+    out:
     vaccinated: a list with all node indices ordered by their vaccination 
     """
 
@@ -30,19 +52,24 @@ def conjugate_gradient_opt(G,N):
     A = rx.adjacency_matrix(G_r)
     eta = np.ones([N])
 
-    for n in range(N):
+    for n in tqdm(range(N)):
 
         grad = grad_comput(A,eta)
-
-        node = np.argmax(grad)[0]
-        grad[node] = 0
+        try:
+            node = np.argmin(grad)[0]
+        except:
+            node = np.argmin(grad)
+        grad[node] = 1000000
 
         while eta[node] == 0:
-            node = np.argmax(grad)[0]
-            grad[node] = 0
+            try:
+                node = np.argmin(grad)[0]
+            except:
+                node = np.argmin(grad)
+            grad[node] = 1000000
 
         eta[node] = 0
 
         vaccinated.append(node)
 
-
+    return vaccinated

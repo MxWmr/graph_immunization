@@ -20,9 +20,9 @@ N = 1000    # number of nodes
 n_graph = 3
 l_G = []
 for i in range(n_graph):
-    G = small_world(N)
+    #G = small_world(N)
     #G = scale_free(N)
-    #G = config_model(N)
+    G = config_model(N)
     l_G.append(G)
 
 ## Spectral radius
@@ -58,7 +58,7 @@ for M in tqdm(M_list):
 
         ## GA
 
-        vaccinated,l_n,l_vuln =GA(G,M, N, c=10000, mut_r=2, n_gene=10000 )
+        vaccinated,l_n,l_vuln =GA(G,M, N, c=5000, mut_r=1.3, n_gene=5000 )
 
         G_i=G.copy()
         G_i.remove_nodes_from(vaccinated)
@@ -123,7 +123,7 @@ for M in tqdm(M_list):
 
 mat = np.array([ed_deg,ed_cent,ed_netsh,ed_ga])
 
-np.save('saved_lists/'+'eff_'+'configmodel_'+'all3_'+'.npy',mat)
+np.save('saved_lists/'+'eff_'+'configmodel_'+'all7_'+'.npy',mat)
 
 plt.figure(1)
 plt.plot(cost,ed_ga,label='genetic algorithm')
@@ -134,7 +134,7 @@ plt.grid()
 plt.legend()
 plt.xlabel('Proportion of nodes vaccinated')
 plt.ylabel('eigendrop')
-plt.savefig('saved_benchmarks/'+'fullbenchmark_'+'configmodel_'+'eigendrop3'+'.png')
+plt.savefig('saved_benchmarks/'+'fullbenchmark_'+'configmodel_'+'eigendrop7'+'.png')
 plt.show()
 
 

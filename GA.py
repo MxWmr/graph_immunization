@@ -331,7 +331,7 @@ def GA(G, M, N, L=52, f_eps =0.0001, n_gene=1000, n_select =None, measure  ='max
 
 
 
-from network_generation import *
+'''from network_generation import *
 
 N = 1000    # number of nodes#
 
@@ -344,4 +344,4 @@ M = int(N*psi)   #Number of vaccinated node
 
 
 vaccinated,l_n,l_vuln =GA(G,M,N, verbose=2,  mut_r=1.5, n_select=10)
- 
+ '''
