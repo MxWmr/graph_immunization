@@ -73,3 +73,44 @@ def conjugate_gradient_opt(G,N):
         vaccinated.append(node)
 
     return vaccinated
+
+
+
+def conjugate_gradient_back(G,N):
+    """
+    in:
+    G: graph to immunize
+    N: number of nodes
+
+    out:
+    vaccinated: a list with all node indices ordered by their vaccination 
+    """
+
+    G_r = rx.networkx_converter(G)
+    vaccinated = []
+    A = rx.adjacency_matrix(G_r)
+    eta = np.zeros([N])
+
+    for n in tqdm(range(N)):
+
+        grad = grad_comput(A,eta)
+        try:
+            node = np.argmax(grad)[0]
+        except:
+            node = np.argmax(grad)
+        grad[node] = np.NINF
+
+        while eta[node] == 1:
+            try:
+                node = np.argmax(grad)[0]
+            except:
+                node = np.argmax(grad)
+            grad[node] = np.NINF
+
+        eta[node] = 1
+
+        vaccinated.append(node)
+
+    vaccinated.reverse()
+    return vaccinated
+
