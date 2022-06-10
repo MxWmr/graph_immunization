@@ -17,38 +17,30 @@ def choose_first_step(known_config,N,alpha,beta):
         try:
             proba[k] = known_config[frozenset([k])][1]**alpha/known_config[frozenset([k])][0]**beta
         except:
-            proba[k] = 0. #### to change !!!!!
-    tot = np.sum(proba)
-    if tot !=0:          
-        proba /= np.sum(proba)
-        return np.random.choice(buffer,p=proba)    
-    else:
-        return np.random.choice(buffer)
+            proba[k] = 0.01 #### to change !!!!!
+         
+    proba /= np.sum(proba)
+    return np.random.choice(buffer,p=proba)    
 
 
 def choose_next_step(config,known_config,N,alpha,beta):
     buffer = [i for i in range(N) if i not in config]
+    
     proba = np.zeros([len(buffer)])
-
     for k,node in enumerate(buffer):
         try:
-            if known_config[frozenset(config+node)][0]**beta !=0:
-                proba[k] = known_config[frozenset(config+node)][1]**alpha/known_config[frozenset(config+node)][0]**beta
+            if known_config[frozenset(np.append(config,node))][0]**beta !=0:
+                proba[k] = known_config[frozenset(np.append(config,node))][1]**alpha/known_config[frozenset(np.append(config,node))][0]**beta
 
             else:
-                proba[k] = known_config[frozenset(config+node)][1]**alpha/0.01**beta
+                proba[k] = known_config[frozenset(np.append(config,node))][1]**alpha/0.01**beta
  
         except:
-            proba[k] = 0. #### to change !!!!!
+            proba[k] = 0.1/len(buffer) #### to change !!!!!
+          
+    proba /= np.sum(proba)
+    return np.random.choice(buffer,p=proba) 
 
-    tot = np.sum(proba)
-    if tot !=0:          
-        proba /= np.sum(proba)
-        nc =np.random.choice(buffer,p=proba) 
-        if 
-        return  
-    else:
-        return np.random.choice(buffer)
             
 
 
@@ -107,9 +99,7 @@ def generate_colony(known_config,mu,N,A,alpha,beta):
 
         for ve in range(1,N-1):  #for each vertex of the path
             node =  choose_next_step(colony[a,:ve],known_config,N,alpha,beta)
-
             colony[a,ve] = node
-
             try:
                 cost[a]+= known_config[frozenset(colony[a,:(ve+1)])][0]
             except:
@@ -128,14 +118,19 @@ def generate_colony(known_config,mu,N,A,alpha,beta):
 
 
 
-def update_pheromon(colony,cost,known_config,Q,p):
+def update_pheromon(colony,cost,known_config,Q,p,mu):
 
     #evaporate the pheromons
     for config in list(known_config.keys()):
         known_config[config][1] *= (1-p)
 
+
+
+    #select the best ants   
+    chosen_ants = colony[np.argsort(cost)[-mu//2:],:]  # here we take the better half of the colony
+
     # add new the pheromons
-    for i,a in enumerate(colony):
+    for i,a in enumerate(chosen_ants):
         
         for j in range(N-1):
             known_config[frozenset(a[:(j+1)])][1] +=Q/cost[i]
@@ -147,7 +142,7 @@ def update_pheromon(colony,cost,known_config,Q,p):
 
 
 
-def ant_colony(G,N,mu =50, n_gene = 1000, alpha=0.8, beta=1.01, Q=10000000000000000000000000, p=0.05):
+def ant_colony(G,N,mu =50, n_gene = 1000, alpha=0.8, beta=1.01, Q=500, p=0.05):
     """
     Return the best order of vaccination of the nodes in G
     in:
@@ -181,7 +176,7 @@ def ant_colony(G,N,mu =50, n_gene = 1000, alpha=0.8, beta=1.01, Q=10000000000000
 
         print(best_cost)
         # Update pheromon
-        known_config = update_pheromon(colony,cost,known_config,Q,p)
+        known_config = update_pheromon(colony,cost,known_config,Q,p,mu)
 
         n_k =len(known_config)
         print(n_k-n_k_old)

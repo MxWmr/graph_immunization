@@ -44,9 +44,8 @@ def netshield_plus(G,M,b):
     vaccinated=[]
     #A = rx.adjacency_matrix(G2)
     t=int(np.floor(M/b))
-
-    for j in tqdm(range(t)):
-        vacc_p = netshield(G2,M)
+    for j in range(t):
+        vacc_p = netshield(G2,b)
         vaccinated = list( set(vaccinated).union(vacc_p))
 
         G2.remove_nodes_from(vacc_p)
