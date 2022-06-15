@@ -127,7 +127,7 @@ def update_pheromon(colony,cost,known_config,Q,p,mu):
 
 
     #select the best ants   
-    chosen_ants = colony[np.argsort(cost)[-mu//2:],:]  # here we take the better half of the colony
+    chosen_ants = colony[np.argsort(cost)[-mu//4:],:]  # here we take the better quartil of the colony
 
     # add new the pheromons
     for i,a in enumerate(chosen_ants):
@@ -192,6 +192,8 @@ import networkx as nx
 N = 100
 
 G = nx.watts_strogatz_graph(N,10,0.8)
-
+#G = nx.read_gml('graph_benchmark_1006.gml')
 
 vacc = ant_colony(G,N)
+
+np.save('some_colony.npy',vacc)
