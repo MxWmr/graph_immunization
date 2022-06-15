@@ -30,8 +30,8 @@ def power_iteration(B,eps =0.01, itemax =1000,N=100):
 
         ite+=1
 
-    phi = np.where(b_k!=0.,1/b_k/N,0)
-
+    #phi = np.where(b_k!=0.,1/b_k/N,0)
+    phi = np.reciprocal(b_k)/100
     return b_k,phi
 
 
@@ -58,7 +58,30 @@ def choose_first_step(known_config,N,alpha,beta):
             proba[k] = 0.01 #### to change !!!!!
          
     proba /= np.sum(proba)
-    return np.random.choice(buffer,p=proba)    
+    return np.random.choice(buffer,p=proba)   
+
+def choose_first_step_deter(A,known_config,N,alpha,beta):
+    buffer = range(N)
+    grad  = grad_comput(A,np.array([]),buffer)
+
+    return np.argmin(grad)
+
+def choose_next_step_deter(A,config,known_config,N,alpha,beta):
+    buffer = [i for i in range(N) if i not in config]
+    grad  = grad_comput(A,config,range(N))
+    try:
+        node = np.argmin(grad)[0]
+    except:
+        node = np.argmin(grad)
+    grad[node] = 100000000
+    while node not in buffer:
+        try:
+            node = np.argmin(grad)[0]
+        except:
+            node = np.argmin(grad)
+        grad[node] = 100000000
+
+    return node
 
 
 def choose_next_step(A,config,known_config,N,alpha,beta):
@@ -127,28 +150,28 @@ def generate_colony(known_config,mu,N,A,alpha,beta):
     for a in range(mu):     #for each ant
 
         # first step 
-        node = choose_first_step(known_config,N,alpha,beta)
+        node = choose_first_step_deter(A,known_config,N,alpha,beta)
         colony[a,0] = node
 
-        try:
+        """try:
             cost[a]+= known_config[frozenset([node])][0]
         except:
             local_cost = f_obj(np.array([node]),A)
             cost[a] += local_cost
             ## create the config
-            known_config[frozenset([node])] = [local_cost,0.1]
-
+            known_config[frozenset([node])] = [local_cost,0.1]"""
+        cost[a] += f_obj(np.array([node]),A)
 
         for ve in range(1,N-1):  #for each vertex of the path
-            node =  choose_next_step(A,colony[a,:ve],known_config,N,alpha,beta)
+            node =  choose_next_step_deter(A,colony[a,:ve],known_config,N,alpha,beta)
             colony[a,ve] = node
-            try:
+            """try:
                 cost[a]+= known_config[frozenset(colony[a,:(ve+1)])][0]
-            except:
-                local_cost = f_obj(colony[a,:(ve+1)],A)
-                cost[a] += local_cost
-                ## create the config
-                known_config[frozenset(colony[a,:(ve+1)])] = [local_cost,0.1]
+            except:"""
+            local_cost = f_obj(colony[a,:(ve+1)],A)
+            cost[a] += local_cost
+            """ ## create the config
+                known_config[frozenset(colony[a,:(ve+1)])] = [local_cost,0.1]"""
 
         # choose the last node 
         node =  [i for i in range(N) if i not in colony[a,:(N-1)]][0]
@@ -184,7 +207,7 @@ def update_pheromon(colony,cost,known_config,Q,p,mu):
 
 
 
-def ant_colony(G,N,mu =50, n_gene = 1000, alpha=0.8, beta=1.01, Q=500, p=0.05):
+def ant_colony(G,N,mu =1, n_gene = 1000, alpha=0.8, beta=1.01, Q=500, p=0.05):
     """
     Return the best order of vaccination of the nodes in G
     in:
@@ -204,13 +227,14 @@ def ant_colony(G,N,mu =50, n_gene = 1000, alpha=0.8, beta=1.01, Q=500, p=0.05):
 
     best_cost =np.Inf
     n_k_old = 0
-
+    old_best_ant = np.zeros([N])
     for n in tqdm(range(n_gene), position=0, leave=True):
 
         
         # generate new paths and evaluate them
         colony,cost,known_config = generate_colony(known_config,mu,N,A,alpha,beta)
 
+        print(colony)
         # keep the best ant and its cost
         if np.amin(cost) < best_cost:
             best_cost = np.amin(cost)
@@ -218,7 +242,9 @@ def ant_colony(G,N,mu =50, n_gene = 1000, alpha=0.8, beta=1.01, Q=500, p=0.05):
 
         print(best_cost)
         # Update pheromon
-        known_config = update_pheromon(colony,cost,known_config,Q,p,mu)
+        #known_config = update_pheromon(colony,cost,known_config,Q,p,mu)
+
+
 
         n_k =len(known_config)
         print(n_k-n_k_old)

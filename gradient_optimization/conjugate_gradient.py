@@ -3,7 +3,7 @@ import retworkx as rx
 from tqdm import tqdm
 
 
-def power_iteration(B,eps =0.01, itemax =1000):
+def power_iteration(B,eps =0.0001, itemax =10000):
     
 
     b_k = np.random.rand(B.shape[0])
@@ -27,8 +27,17 @@ def power_iteration(B,eps =0.01, itemax =1000):
 
         ite+=1
 
-    return b_k,np.reciprocal(b_k)/1000
+    return b_k,np.where(b_k!=0.,1/b_k/1000,0)
 
+
+def grad_comput_exact(A,eta):
+    B = np.dot(A,np.diag(eta))
+    #psi,phi = power_iteration(B)
+    e,v = np.linalg.eig(B)
+    psi = v[:,np.argmax(np.absolute(e))]
+    #phi = np.reciprocal(psi)/100
+    phi = np.where(psi!=0.,1/psi/1000,0)
+    return np.dot(np.diag(phi),np.dot(A.T,psi))
 
 def grad_comput(A,eta):
     B = np.dot(A,np.diag(eta))
@@ -36,8 +45,7 @@ def grad_comput(A,eta):
     return np.dot(np.diag(phi),np.dot(A.T,psi))
 
 
-
-def conjugate_gradient_opt(G,N):
+def conjugate_gradient_opt(G,N,exact=False):
     """
     in:
     G: graph to immunize
@@ -54,7 +62,11 @@ def conjugate_gradient_opt(G,N):
 
     for n in tqdm(range(N)):
 
-        grad = grad_comput(A,eta)
+        if not exact:
+            grad = grad_comput(A,eta)
+
+        else:
+            grad = grad_comput_exact(A,eta)
         try:
             node = np.argmin(grad)[0]
         except:
@@ -76,7 +88,7 @@ def conjugate_gradient_opt(G,N):
 
 
 
-def conjugate_gradient_back(G,N):
+def conjugate_gradient_back(G,N,exact=False):
     """
     in:
     G: graph to immunize
@@ -93,7 +105,10 @@ def conjugate_gradient_back(G,N):
 
     for n in tqdm(range(N)):
 
-        grad = grad_comput(A,eta)
+        if not exact:
+            grad = grad_comput(A,eta)
+        else:
+            grad = grad_comput_exact(A,eta)
         try:
             node = np.argmax(grad)[0]
         except:
@@ -114,3 +129,11 @@ def conjugate_gradient_back(G,N):
     vaccinated.reverse()
     return vaccinated
 
+
+'''import networkx as nx
+N = 1000
+
+G = nx.watts_strogatz_graph(N,10,0.8)
+for i in range(5):
+    vacc = conjugate_gradient_opt(G,N)
+    print(vacc)'''
